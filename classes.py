@@ -134,8 +134,19 @@ class Knight(PieceABC):
         super().__init__(color, board, rank, file)
 
     def get_legal_moves(self):
-        if self.color == "WHITE":
-            pass
+        legal_moves = []
+        offsets = [(2, 1),(2, -1),(1, 2),(1, -2),(-1, 2),(-1, -2),(-2, 1),(-2, -1)]
+        for cur_rank, cur_file in offsets:
+            new_rank = self.rank + cur_rank
+            new_file = self.file + cur_file
+            target_square = None
+            if new_rank <= 8 and new_rank >= 1 and new_file <= 8 and new_file >= 1:
+                target_square = self.board.get_square(new_rank, new_file)
+                if target_square is None:
+                    legal_moves.append(((self.rank, self.file), (new_rank, new_file)))
+                if isinstance(target_square, PieceABC) and target_square.color != self.color:
+                    legal_moves.append(((self.rank, self.file), (new_rank, new_file)))
+        return legal_moves
 
     def __str__(self):
         if self.color == "WHITE":
