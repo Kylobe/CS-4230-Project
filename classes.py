@@ -7,25 +7,33 @@ class Board:
             self.board.append([None, None, None, None, None, None, None, None])
         for i in range(len(self.board)):
             for j in range(len(self.board[i])):
+                cur_rank = 8 - i
+                cur_file = j + 1
                 cur_piece = None
-                if i == 0 or i == 1:
+                if cur_rank == 1 or cur_rank == 2:
                     color = "BLACK"
-                elif i == 6 or i == 7:
+                elif cur_rank == 7 or cur_rank == 8:
                     color = "WHITE"
-                if i == 0 or i == 7:
-                    if j == 0 or j == 7:
+                if cur_rank == 1 or cur_rank == 8:
+                    if cur_file == 1 or cur_file == 8:
                         cur_piece = Rook(color, self, i, j)
-                    if j == 1 or j == 6:
+                    elif cur_file == 2 or cur_file == 7:
                         cur_piece = Knight(color, self, i, j)
-                    if j == 2 or j == 5:
+                    elif cur_file == 3 or cur_file == 6:
                         cur_piece = Bishop(color, self, i, j)
-                    if j == 3:
+                    elif cur_file == 4:
                         cur_piece = Queen(color, self, i, j)
-                    if j == 4:
+                    elif cur_file == 5:
                         cur_piece = King(color, self, i, j)
-                if i == 1 or i == 6:
+                if cur_rank == 2 or cur_rank == 7:
                     cur_piece = Pawn(color, self, i, j)
-                self.board[i][j] = cur_piece
+                self.board[cur_rank - 1][cur_file - 1] = cur_piece
+        self.color_to_move = "WHITE"
+
+    def get_square(self, rank, file):
+        rank_index = 8 - rank
+        file_index = file - 1
+        return self.board[rank_index][file_index]
 
     def __str__(self):
         return_str = ""
