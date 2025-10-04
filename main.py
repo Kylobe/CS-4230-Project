@@ -2,7 +2,8 @@ from classes import Board
 
 def main():
     my_board = Board()
-    print(my_board.get_square(8, 1))
+    print(my_board)
+    print(my_board.get_square(7, 1).get_legal_moves())
 
 if __name__ == "__main__":
     main()
