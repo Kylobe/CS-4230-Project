@@ -35,6 +35,23 @@ class Board:
         file_index = file - 1
         return self.board[rank_index][file_index]
 
+    def set_square(self, rank, file, piece_type, piece_color):
+        rank_index = 8 - rank
+        file_index = file - 1
+        if piece_type == "queen":
+            new_piece = Queen(piece_color, self, rank, file)
+        if piece_type == "king":
+            new_piece = King(piece_color, self, rank, file)
+        if piece_type == "knight":
+            new_piece = Knight(piece_color, self, rank, file)
+        if piece_type == "bishop":
+            new_piece = Bishop(piece_color, self, rank, file)
+        if piece_type == "rook":
+            new_piece = Rook(piece_color, self, rank, file)
+        if piece_type == "pawn":
+            new_piece = Pawn(piece_color, self, rank, file)
+        self.board[rank_index][file_index] = new_piece
+
     def get_legal_moves(self):
         legal_moves = []
         for rank in self.board:
@@ -120,8 +137,22 @@ class Bishop(PieceABC):
         super().__init__(color, board, rank, file)
 
     def get_legal_moves(self):
-        if self.color == "WHITE":
-            pass
+        legal_moves = []
+        directions = [(1, 1),(1, -1),(-1, 1),(-1, -1)]
+        for cur_rank_direction, cur_file_direction in directions:
+            for i in range(1, 8):
+                new_rank = self.rank + (i * cur_rank_direction)
+                new_file = self.file + (i * cur_file_direction)
+                target_square = None
+                if new_rank <= 8 and new_rank >= 1 and new_file <= 8 and new_file >= 1:
+                    target_square = self.board.get_square(new_rank, new_file)
+                    if target_square is None:
+                        legal_moves.append(((self.rank, self.file), (new_rank, new_file)))
+                    if isinstance(target_square, PieceABC):
+                        if target_square.color != self.color:
+                            legal_moves.append(((self.rank, self.file), (new_rank, new_file)))
+                        break
+        return legal_moves
 
     def __str__(self):
         if self.color == "WHITE":
