@@ -123,8 +123,22 @@ class Rook(PieceABC):
         super().__init__(color, board, rank, file)
 
     def get_legal_moves(self):
-        if self.color == "WHITE":
-            pass
+        legal_moves = []
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        for cur_rank_direction, cur_file_direction in directions:
+            for i in range(1, 8):
+                new_rank = self.rank + (i * cur_rank_direction)
+                new_file = self.file + (i * cur_file_direction)
+                target_square = None
+                if new_rank <= 8 and new_rank >= 1 and new_file <= 8 and new_file >= 1:
+                    target_square = self.board.get_square(new_rank, new_file)
+                    if target_square is None:
+                        legal_moves.append(((self.rank, self.file), (new_rank, new_file)))
+                    if isinstance(target_square, PieceABC):
+                        if target_square.color != self.color:
+                            legal_moves.append(((self.rank, self.file), (new_rank, new_file)))
+                        break
+        return legal_moves
 
     def __str__(self):
         if self.color == "WHITE":
@@ -138,7 +152,7 @@ class Bishop(PieceABC):
 
     def get_legal_moves(self):
         legal_moves = []
-        directions = [(1, 1),(1, -1),(-1, 1),(-1, -1)]
+        directions = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
         for cur_rank_direction, cur_file_direction in directions:
             for i in range(1, 8):
                 new_rank = self.rank + (i * cur_rank_direction)

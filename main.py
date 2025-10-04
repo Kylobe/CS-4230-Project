@@ -2,7 +2,7 @@ from classes import Board
 
 def main():
     my_board = Board()
-    my_board.set_square(4, 4, "bishop", "BLACK")
+    my_board.set_square(4, 4, "rook", "BLACK")
     print(my_board)
     print(my_board.get_square(4, 4).get_legal_moves())
 
