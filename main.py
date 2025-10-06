@@ -1,10 +1,11 @@
-from classes import Board
+from utils.game import Game
 
 def main():
-    my_board = Board()
-    my_board.set_square(6, 4, "king", "BLACK")
-    print(my_board)
-    print(my_board.get_square(6, 4).get_legal_moves())
+    """    
+    Creates a new game and starts it.
+    """
+    game = Game()
+    game.start()
 
 if __name__ == "__main__":
     main()
