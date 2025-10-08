@@ -10,12 +10,17 @@ The game displays an 8x8 chess board with pieces represented by letters (upperca
 
 ## Component Descriptions
 
-### piece.py
-Defines the `Piece` class which represents individual chess pieces.
+### pieces.py
+Defines the `Piece` abstract base class which contains common functionallity between different types of chess pieces.
+
+Defines the child classes of Piece: `Pawn`, `Rook`, `Knight`, `Bishop`, `Queen`, and `King`
 
 **Responsibilities:**
-- Stores piece type (king, queen, rook, bishop, knight, pawn)
 - Stores piece color (white or black)
+- Stores piece row (0-7)
+- Stores piece column (0-7)
+- Stores a two dimensional 8x8 grid of pieces and null objects that represents the board state
+- Provides a list of uci positions it can attack
 - Provides string representation for display
 - Uses uppercase letters for white pieces (K, Q, R, B, N, P)
 - Uses lowercase letters for black pieces (k, q, r, b, n, p)
@@ -29,7 +34,7 @@ Defines the `Board` class which manages the chess board and piece positions.
 - Sets up the initial chess position with all pieces in standard starting locations
 - Displays the board in a text-based grid format with rank and file labels
 - Converts chess notation (like "E2") to array indices and vice versa
-- Moves pieces from one position to another
+- Immutably moves pieces from one position to another 
 - Handles pawn promotion (automatically promotes pawns to queens when reaching the opposite end)
 - Manages piece captures
 
@@ -37,7 +42,7 @@ Defines the `Board` class which manages the chess board and piece positions.
 Defines the `MoveValidator` class which validates chess moves according to piece movement rules.
 
 **Responsibilities:**
-- Validates moves based on piece type and movement patterns
+- Generates a list of valid moves based on what each piece sees, and whether or not that move puts their king in check.
 - Checks if the correct player owns the piece being moved
 - Prevents capturing your own pieces
 - Implements specific movement rules for each piece type:
@@ -57,6 +62,14 @@ Defines the `CheckDetector` class which detects when a king is in check.
 - Determines if a king is under attack by any enemy piece
 - Scans all enemy pieces to see if any can legally move to the king's position
 - Reports check status at the beginning of each turn
+
+### static_chess_methods.py
+
+Defines the `StaticChessMethods` class which implements common chess needs.
+
+**Responsibilities:**
+- Converts uci positions to grid indices
+- Converts grid indices to uci positions
 
 ### game.py
 Defines the `Game` class which controls the main game flow.
@@ -93,7 +106,7 @@ python main.py
 6. If a piece is captured, the program reports it
 7. If a king is in check, the program reports it at the start of that player's turn
 8. Players alternate turns until one king is captured
-9. The game ends when a king is captured, and the winner is announced
+9. The game ends when a player no longer has legal moves, the winner is announced if that player is also in check. Otherwise its a draw
 
 ## Game Limitations (Dumb Chess Rules)
 
@@ -102,15 +115,9 @@ This is a simplified version of chess with the following limitations:
 ### Not Implemented
 - **Castling**: Not allowed
 - **En passant**: Pawn captures en passant are not implemented
-- **Checkmate detection**: The game does not detect checkmate
-- **Stalemate detection**: The game does not detect stalemate
-- **Self-check prevention**: Players can move their king into check or leave their king in check (illegal in real chess)
-- **Draw conditions**: No detection of threefold repetition, fifty-move rule, or insufficient material
 
 ### Simplified Rules
 - **Pawn promotion**: Pawns automatically promote to queens when reaching the opposite end (no choice of piece)
-- **Game ending**: The game ends when a king is actually captured, not when checkmate occurs
-- **Check handling**: Check is reported but does not force the player to respond to it
 
 ## Example Board Display
 

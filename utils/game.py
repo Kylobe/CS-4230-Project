@@ -23,8 +23,8 @@ class Game:
         Sets up the board, validators, and game state.
         """
         self.board = Board()
+
         self.move_validator = MoveValidator(self.board)
-        self.check_detector = CheckDetector(self.board, self.move_validator)
         self.current_player = 'white'
         self.game_over = False
     
@@ -42,7 +42,7 @@ class Game:
         print()
         
         # Display initial board
-        self.board.display()
+        print(self.board.display())
         
         # Main game loop
         while not self.game_over:
@@ -53,7 +53,21 @@ class Game:
         Cycles one turn. Checks for check, prompts for move, validates it, executes it, and switches players.
         """
         # Check if current player's king is in check
-        if self.check_detector.is_in_check(self.current_player):
+        check = CheckDetector.is_in_check(self.current_player, self.board.grid)
+        legal_moves = self.move_validator.generate_valid_moves(self.current_player)
+        # If there are no legal moves, end the game
+        if len(legal_moves) == 0:
+            # Declare victory by check mate
+            if check:
+                victor = "white" if self.current_player == "black" else "black"
+                print(f"\n{victor.capitalize()} won with check mate!")
+            # Declare Draw
+            else:
+                print(f"\n{self.current_player.capitalize()} has no legal moves, game ends in a draw!")
+            self.game_over = True
+            return
+
+        if check:
             print(f"\n{self.current_player.capitalize()} is in check!")
         
         # Prompt for move
@@ -75,18 +89,20 @@ class Game:
             return
         
         # Execute the move
-        captured_piece = self.board.move_piece(source, destination)
+        new_state, captured_piece = self.board.move_piece(source, destination)
+
+        self.board.set_grid(new_state)
         
         # Check if a king was captured
         if captured_piece and captured_piece.piece_type == 'king':
-            self.board.display()
+            print(self.board.display())
             print(f"\n{self.current_player.capitalize()} wins! {captured_piece.color.capitalize()} king has been captured!")
             self.game_over = True
             return
         
         # Display the board after the move
         print()
-        self.board.display()
+        print(self.board.display())
         
         # Report any captures
         if captured_piece:

@@ -12,18 +12,8 @@ class CheckDetector:
     to see if any can legally move to the king's position.
     """
     
-    def __init__(self, board, move_validator):
-        """
-        Initialize the check detector.
-        
-        Args:
-            board (Board): The chess board
-            move_validator (MoveValidator): The move validator to check if attacks are legal
-        """
-        self.board = board
-        self.move_validator = move_validator
-    
-    def find_king(self, color):
+    @staticmethod
+    def find_king(color, grid):
         """
         Find the position of a king on the board.
         
@@ -35,12 +25,13 @@ class CheckDetector:
         """
         for row in range(8):
             for col in range(8):
-                piece = self.board.grid[row][col]
+                piece = grid[row][col]
                 if piece and piece.piece_type == 'king' and piece.color == color:
                     return row, col
         return None, None
-    
-    def is_in_check(self, color):
+
+    @staticmethod
+    def is_in_check(color, grid):
         """
         Determine if a king of the given color is in check.
         
@@ -53,14 +44,14 @@ class CheckDetector:
             bool: True if the king is in check, False otherwise
         """
         # Find the king
-        king_row, king_col = self.find_king(color)
+        king_row, king_col = CheckDetector.find_king(color, grid)
         
         # If king not found (captured), return False
         if king_row is None:
             return False
         
         # Convert king position to chess notation
-        king_pos = self.indices_to_position(king_row, king_col)
+        king_pos = CheckDetector.indices_to_position(king_row, king_col)
         
         # Determine enemy color
         enemy_color = 'black' if color == 'white' else 'white'
@@ -68,24 +59,21 @@ class CheckDetector:
         # Check all squares for enemy pieces
         for row in range(8):
             for col in range(8):
-                piece = self.board.grid[row][col]
+                piece = grid[row][col]
                 
                 # Skip if square is empty or contains friendly piece
                 if piece is None or piece.color != enemy_color:
                     continue
                 
-                # Get this enemy piece's position
-                piece_pos = self.indices_to_position(row, col)
-                
-                # Check if this enemy piece can move to king's position
-                is_valid, _ = self.move_validator.is_valid_move(piece_pos, king_pos, enemy_color)
-                
-                if is_valid:
+                piece_legal_moves = piece.get_legal_moves()
+
+                if king_pos in piece_legal_moves:
                     return True
-        
+
         return False
-    
-    def indices_to_position(self, row, col):
+
+    @staticmethod
+    def indices_to_position(row, col):
         """
         Convert grid indices to chess notation.
         

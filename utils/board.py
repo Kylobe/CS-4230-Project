@@ -5,7 +5,7 @@ Defines the Board class which maintains the 8x8 grid
 of chess pieces, handles piece placement, movement, and board display.
 """
 
-from .piece import Piece
+from .pieces import Piece, Pawn, Knight, Bishop, Rook, Queen, King 
 
 class Board:
     """
@@ -33,32 +33,35 @@ class Board:
         """
         # Set up white pieces
         # All white pieces except pawns at index 0
-        self.grid[0][0] = Piece('rook', 'white')
-        self.grid[0][1] = Piece('knight', 'white')
-        self.grid[0][2] = Piece('bishop', 'white')
-        self.grid[0][3] = Piece('queen', 'white')
-        self.grid[0][4] = Piece('king', 'white')
-        self.grid[0][5] = Piece('bishop', 'white')
-        self.grid[0][6] = Piece('knight', 'white')
-        self.grid[0][7] = Piece('rook', 'white')
+        self.grid[0][0] = Rook('white', 0, 0, self.grid)
+        self.grid[0][1] = Knight('white', 0, 1, self.grid)
+        self.grid[0][2] = Bishop('white', 0, 2, self.grid)
+        self.grid[0][3] = Queen('white', 0, 3, self.grid)
+        self.grid[0][4] = King('white', 0, 4, self.grid)
+        self.grid[0][5] = Bishop('white', 0, 5, self.grid)
+        self.grid[0][6] = Knight('white', 0, 6, self.grid)
+        self.grid[0][7] = Rook('white', 0, 7, self.grid)
         
         # Set up white pawns at index 1
         for col in range(8):
-            self.grid[1][col] = Piece('pawn', 'white')
+            self.grid[1][col] = Pawn('white', 1, col, self.grid)
         
         # Set up black pawns at index 6
         for col in range(8):
-            self.grid[6][col] = Piece('pawn', 'black')
+            self.grid[6][col] = Pawn('black', 6, col, self.grid)
         
         # Set up black pieces all but pawns at index 7
-        self.grid[7][0] = Piece('rook', 'black')
-        self.grid[7][1] = Piece('knight', 'black')
-        self.grid[7][2] = Piece('bishop', 'black')
-        self.grid[7][3] = Piece('queen', 'black')
-        self.grid[7][4] = Piece('king', 'black')
-        self.grid[7][5] = Piece('bishop', 'black')
-        self.grid[7][6] = Piece('knight', 'black')
-        self.grid[7][7] = Piece('rook', 'black')
+        self.grid[7][0] = Rook('black', 7, 0, self.grid)
+        self.grid[7][1] = Knight('black', 7, 1, self.grid)
+        self.grid[7][2] = Bishop('black', 7, 2, self.grid)
+        self.grid[7][3] = Queen('black', 7, 3, self.grid)
+        self.grid[7][4] = King('black', 7, 4, self.grid)
+        self.grid[7][5] = Bishop('black', 7, 5, self.grid)
+        self.grid[7][6] = Knight('black', 7, 6, self.grid)
+        self.grid[7][7] = Rook('black', 7, 7, self.grid)
+
+    def set_grid(self, grid):
+        self.grid = grid
     
     def display(self):
         """
@@ -68,29 +71,33 @@ class Board:
         Column labels A-H labeled at the top and bottom.
         Pieces shown with their character representations.
         """
-        # Print column labels
-        print("    A   B   C   D   E   F   G   H")
-        print("  " + "-" * 33)
-        print("  " + "-" * 33)
 
-        # Print from top to bottom
+        board_string = ""
+        # Add column labels
+        board_string += "    A   B   C   D   E   F   G   H\n"
+        board_string += "  " + "-" * 33 + "\n"
+        board_string += "  " + "-" * 33 + "\n"
+
+        # Add from top to bottom
         for rank in range(7, -1, -1):
-            # Print row number
-            print(f"{rank + 1} ", end="")
+            # Add row number
+            board_string += f"{rank + 1} "
             
-            # Print each square in the rank
+            # Add each square in the rank
             for file in range(8):
                 piece = self.grid[rank][file]
-                # Show piece character or empty space
+                # Add piece character or empty space
                 piece_char = str(piece) if piece else ' '
-                print(f"| {piece_char} ", end="")
-            
-            print("|")
-            print("  " + "-" * 33)
-        
-        # Print column labels
-        print("  " + "-" * 33)
-        print("    A   B   C   D   E   F   G   H")
+                board_string += f"| {piece_char} "
+
+            board_string += "|\n"
+            board_string += "  " + "-" * 33 + "\n"
+
+        # Add column labels
+        board_string += "  " + "-" * 33 + "\n"
+        board_string += "    A   B   C   D   E   F   G   H\n"
+
+        return board_string
     
     def position_to_indices(self, position):
         """
@@ -154,26 +161,59 @@ class Board:
         Returns:
             Piece or None: The captured piece if any, None otherwise
         """
+        new_grid = [[None for _ in range(8)] for _ in range(8)]
+        for row in range(8):
+            for col in range(8):
+                cur_piece = self.grid[row][col]
+                if isinstance(cur_piece, Piece):
+                    new_grid[row][col] = cur_piece.copy()
+        for row in range(8):
+            for col in range(8):
+                cur_piece = new_grid[row][col]
+                if isinstance(cur_piece, Piece):
+                    cur_piece.set_grid(new_grid)
+
         source_row, source_col = self.position_to_indices(source)
         dest_row, dest_col = self.position_to_indices(destination)
         
         # Get the piece being moved
-        piece = self.grid[source_row][source_col]
-        
+        piece: Piece = new_grid[source_row][source_col]
+        piece.set_row_col(dest_row, dest_col)
+
         # Get any piece being captured
-        captured = self.grid[dest_row][dest_col]
+        captured = new_grid[dest_row][dest_col]
         
         # Move the piece
-        self.grid[dest_row][dest_col] = piece
-        self.grid[source_row][source_col] = None
+        new_grid[dest_row][dest_col] = piece
+        new_grid[source_row][source_col] = None
         
         # Handle pawn promotion (pawn reaching opposite end)
         if piece.piece_type == 'pawn':
             # White pawn reaching index 7
             if piece.color == 'white' and dest_row == 7:
-                self.grid[dest_row][dest_col] = Piece('queen', 'white')
+                new_grid[dest_row][dest_col] = Queen('white', dest_row, dest_col, new_grid)
             # Black pawn reaching index 0
             elif piece.color == 'black' and dest_row == 0:
-                self.grid[dest_row][dest_col] = Piece('queen', 'black')
+                new_grid[dest_row][dest_col] = Queen('black', dest_row, dest_col, new_grid)
         
-        return captured
+        return new_grid, captured
+
+    def __repr__(self):
+        return self.display()
+
+class PsuedoBoard(Board):
+    def __init__(self, grid : list):
+        self.old_grid = self.copy_grid(grid)
+        self.grid = self.copy_grid(grid)
+
+    def copy_grid(self, grid):
+        new_grid = [[None for _ in range(8)] for _ in range(8)]
+        for row in range(8):
+            for col in range(8):
+                cur_piece = grid[row][col]
+                if not cur_piece is None:
+                    new_grid[row][col] = cur_piece.copy()
+        return new_grid
+
+    def reset(self):
+        self.grid = self.copy_grid(self.old_grid)
