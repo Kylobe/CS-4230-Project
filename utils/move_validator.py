@@ -3,7 +3,7 @@ Validates chess moves according to piece movement rules.
 
 Defines the MoveValidator class which checks if a move is legal based on the piece type, board state, and chess rules.
 """
-from .board import Board, PsuedoBoard
+from .board import Board
 from .check_detector import CheckDetector
 
 class MoveValidator:

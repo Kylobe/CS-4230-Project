@@ -200,20 +200,3 @@ class Board:
 
     def __repr__(self):
         return self.display()
-
-class PsuedoBoard(Board):
-    def __init__(self, grid : list):
-        self.old_grid = self.copy_grid(grid)
-        self.grid = self.copy_grid(grid)
-
-    def copy_grid(self, grid):
-        new_grid = [[None for _ in range(8)] for _ in range(8)]
-        for row in range(8):
-            for col in range(8):
-                cur_piece = grid[row][col]
-                if not cur_piece is None:
-                    new_grid[row][col] = cur_piece.copy()
-        return new_grid
-
-    def reset(self):
-        self.grid = self.copy_grid(self.old_grid)
