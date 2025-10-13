@@ -1,6 +1,6 @@
 # Chess Game
 
-A console-based chess program that allows two players to play chess with move validation and check detection. This is a simplified "dumb" version of chess.s
+A console-based chess program that allows two players to play chess with move validation and check detection. This is a simplified "dumb" version of chess.
 
 ## Description
 
@@ -8,10 +8,21 @@ This chess program implements a fully functional two-player chess game in the te
 
 The game displays an 8x8 chess board with pieces represented by letters (uppercase for white, lowercase for black). The board is labeled with standard chess notation: files A-H (columns) and ranks 1-8 (rows).
 
+## Installation
+
+Before running the program or tests, install the required dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+**Required packages:**
+- `openpyxl` - For generating Excel test reports
+
 ## Component Descriptions
 
 ### pieces.py
-Defines the `Piece` abstract base class which contains common functionallity between different types of chess pieces.
+Defines the `Piece` abstract base class which contains common functionality between different types of chess pieces.
 
 Defines the child classes of Piece: `Pawn`, `Rook`, `Knight`, `Bishop`, `Queen`, and `King`
 
@@ -88,11 +99,14 @@ Defines the `Game` class which controls the main game flow.
 ## How to Run
 
 1. Navigate to the project directory in your terminal
-2. Runs:
-
-```bash
-python main.py
-```
+2. Install dependencies (if not already done):
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Run the game:
+   ```bash
+   python -m main
+   ```
 
 ## How to Play
 
@@ -144,3 +158,215 @@ This is a simplified version of chess with the following limitations:
   ---------------------------------
     A   B   C   D   E   F   G   H
 ```
+
+## Testing
+
+This project includes a comprehensive test suite with 46 test cases covering all aspects of the chess game. Tests are organized into three categories: **Unit Tests**, **Integration Tests**, and **System Tests**.
+
+### Test Categories
+
+#### 1. Unit Tests
+Unit tests verify individual components in isolation, testing single methods and classes without dependencies.
+
+**Coverage:**
+- Static method conversions (UCI notation ↔ grid indices)
+- Individual piece movement patterns (Pawn, Knight, Bishop, Rook, Queen, King)
+- Piece string representation
+- CheckDetector helper methods
+- Board utility methods
+- Piece copying functionality
+
+**Example:** `TC-UNIT-001` verifies that chess notation like "E4" correctly converts to grid indices (3, 4).
+
+#### 2. Integration Tests
+Integration tests verify that multiple components work together correctly, testing interactions between classes.
+
+**Coverage:**
+- Board + MoveValidator integration
+- Board + CheckDetector integration
+- Piece movement with board obstacles
+- Pawn promotion with board state
+- Legal move generation considering check
+- Board state copying for validation
+
+**Example:** `TC-INT-001` verifies that Board and MoveValidator work together to handle pawn moves, including validation, execution, and state updates.
+
+#### 3. System Tests
+System tests verify complete game workflows from start to finish, testing end-to-end scenarios.
+
+**Coverage:**
+- Game initialization and board setup
+- Complete move sequences
+- Turn alternation
+- Piece captures
+- Check detection
+- Pawn promotion
+- Game ending conditions (checkmate, stalemate, king capture)
+- Move input parsing (all supported formats)
+- Illegal move rejection
+- Board state persistence
+
+**Example:** `TC-SYS-003` verifies a standard opening move sequence, ensuring pieces move correctly and the board state updates properly.
+
+### How to Run Tests
+
+#### Run All Tests with Excel Export
+This executes all test suites and generates a detailed Excel report:
+
+```bash
+python -m test.test
+```
+
+**Output:**
+- Console summary with pass/fail statistics
+- Excel report saved to `test/export/chess_test_results_YYYYMMDD_HHMMSS.xlsx`
+- Exit code 0 for success, 1 for failures
+
+#### Run Specific Test Suite
+```bash
+# Run only system tests
+python -m unittest test.system.system_tests
+
+# Run only integration tests
+python -m unittest test.integration.integration_tests
+
+# Run only unit tests
+python -m unittest test.unit.unit_tests
+```
+
+#### Run Individual Test
+```bash
+# Run a specific test method
+python -m unittest test.system.system_tests.TestChessGameSystem.test_game_initialization
+```
+
+### Test Case Format
+
+Each test case follows a consistent format with metadata for Excel export:
+
+```python
+@test_case('TC-UNIT-001', 'Description of what this test verifies')
+def test_method_name(self):
+    """
+    Detailed docstring explaining:
+    - What component/method is being tested
+    - Test setup and preconditions
+    - Expected results
+    - Any edge cases covered
+    """
+    # Arrange: Set up test data
+    test_object = SomeClass()
+    
+    # Act: Execute the method being tested
+    result = test_object.method_to_test()
+    
+    # Assert: Verify expected behavior
+    self.assertEqual(result, expected_value)
+    self.assertTrue(condition)
+```
+
+**Test Case ID Convention:**
+- `TC-SYS-XXX` - System tests (complete workflows)
+- `TC-INT-XXX` - Integration tests (component interactions)  
+- `TC-UNIT-XXX` - Unit tests (individual methods)
+
+Where `XXX` is a zero-padded 3-digit number (001, 002, etc.)
+
+### Excel Report Format
+
+The generated Excel report includes two sheets:
+
+#### Sheet 1: Test Results
+A detailed table with the following columns:
+
+| Column | Description |
+|--------|-------------|
+| **Test Case ID** | Unique identifier (e.g., TC-SYS-001) |
+| **Category** | SYSTEM, INTEGRATION, or UNIT |
+| **Test Name** | Python method name |
+| **Description** | Human-readable explanation of what's tested |
+| **Result** | PASS, FAIL, ERROR, or SKIP (color-coded) |
+| **Duration (s)** | Execution time in seconds |
+| **Timestamp** | When the test was executed |
+| **Error Message** | Full traceback for failures (if applicable) |
+
+**Color Coding:**
+- Green background = PASS
+- Red background = FAIL  
+- Yellow background = ERROR
+- Gray background = SKIP
+
+#### Sheet 2: Summary
+Test execution statistics:
+- Total tests run
+- Number passed/failed/errors/skipped
+- Pass rate percentage
+- Execution date and time
+
+### Finding Test Results
+
+After running `python -m test.test`, the Excel report is saved to:
+
+```
+tests/export/chess_test_results_YYYYMMDD_HHMMSS.xlsx
+```
+
+Where `YYYYMMDD_HHMMSS` is the timestamp when tests were executed (e.g., `chess_test_results_20251002_143022.xlsx`).
+
+**Example Console Output:**
+```
+Running Chess Game Tests...
+
+======================================================================
+TEST EXECUTION SUMMARY
+======================================================================
+Total Tests: 46
+Passed: 44
+Failed: 2
+Errors: 0
+Skipped: 0
+======================================================================
+
+Excel report saved to: tests/export/chess_test_results_20251012_143022.xlsx
+```
+
+### Adding New Tests
+
+To add a new test case:
+
+1. Open the appropriate test file (`unit_tests.py`, `integration_tests.py`, or `system_tests.py`)
+2. Add a new test method to the test class
+3. Use the `@test_case` decorator with a unique ID and description
+4. Follow the Arrange-Act-Assert pattern
+5. Run `test.py` to include it in the Excel report
+
+**Example:**
+```python
+@test_case('TC-UNIT-019', 'Verify rook cannot jump over pieces')
+def test_rook_cannot_jump(self):
+    """Test that rook movement is blocked by intervening pieces."""
+    # Test implementation here
+    pass
+```
+
+### Troubleshooting Tests
+
+**Import Errors:**
+- Ensure you're running from the project root directory
+- Verify all `__init__.py` files exist in test directories
+
+**Excel Not Generated:**
+- Install openpyxl: `pip install -r requirements.txt`
+- Check write permissions for `test/export/` directory
+
+**Module Not Found:**
+```bash
+python -m test.test
+```
+
+## Requirements
+
+- Python 3.7+
+- openpyxl (for test report generation)
+
+See `requirements.txt` for complete dependency list.
