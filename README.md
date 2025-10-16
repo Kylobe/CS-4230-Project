@@ -8,16 +8,16 @@ This chess program implements a fully functional two-player chess game in the te
 
 The game displays an 8x8 chess board with pieces represented by letters (uppercase for white, lowercase for black). The board is labeled with standard chess notation: files A-H (columns) and ranks 1-8 (rows).
 
-## Installation
-
-Before running the program or tests, install the required dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-**Required packages:**
-- `openpyxl` - For generating Excel test reports
+## Directory
+- [Component Descriptions](#component-descriptions)
+- [How to Run](#how-to-run)
+  - [Windows](#windows)
+  - [Mac/Linux](#maclinux)
+- [How to Play](#how-to-play)
+- [Game Limitations](#game-limitations-dumb-chess-rules)
+- [Example Board Display](#example-board-display)
+- [Testing](#testing)
+- [Requirements](#requirements)
 
 ## Component Descriptions
 
@@ -99,14 +99,26 @@ Defines the `Game` class which controls the main game flow.
 ## How to Run
 
 1. Navigate to the project directory in your terminal
-2. Install dependencies (if not already done):
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Run the game:
-   ```bash
-   python -m main
-   ```
+2. Run the game:
+    ### Windows
+
+    1. Navigate to the project directory
+    2. Double-click `ChessGame.exe` or run from Command Prompt:
+      ```cmd
+      ChessGame.exe
+      ```
+
+    ### Mac/Linux
+
+    1. Navigate to the project directory in Terminal
+    2. Make the file executable (first time only):
+      ```bash
+      chmod +x ChessGame-Linux
+      ```
+    3. Run the game:
+      ```bash
+      ./ChessGame-Linux
+      ```
 
 ## How to Play
 
@@ -162,6 +174,17 @@ This is a simplified version of chess with the following limitations:
 ## Testing
 
 This project includes a comprehensive test suite with 46 test cases covering all aspects of the chess game. Tests are organized into three categories: **Unit Tests**, **Integration Tests**, and **System Tests**.
+
+## Installation
+
+Before running the tests, install the required dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+**Required packages:**
+- `openpyxl` - For generating Excel test reports
 
 ### Test Categories
 
