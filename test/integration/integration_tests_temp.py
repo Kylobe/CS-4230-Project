@@ -1,3 +1,4 @@
+# Temporary file for updated content
 """
 Integration Tests for Chess Game
 
@@ -9,12 +10,10 @@ EXPORT:
 - test_case decorator function to identify test cases
 - All test cases are labeled with (unique identifier, description)
 - unique identifier = 'TC-INT-xxx'
-
-An example is given to make the export run cleanly.
 """
 
 import unittest
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from utils.board import Board
 from utils.check_detector import CheckDetector
@@ -23,7 +22,7 @@ from utils.pieces import Bishop, King, Knight, Pawn, Piece, Queen, Rook
 from utils.static_chess_methods import StaticChessMethods
 
 
-def test_case(test_id, description):
+def test_case(test_id: str, description: str) -> Any:
     """
     Decorator to add test metadata for Excel export.
 
@@ -32,7 +31,7 @@ def test_case(test_id, description):
         description: Human-readable description of what the test verifies
     """
 
-    def decorator(func):
+    def decorator(func: Any) -> Any:
         func.test_id = test_id
         func.test_description = description
         return func
@@ -43,29 +42,23 @@ def test_case(test_id, description):
 class TestChessGameIntegration(unittest.TestCase):
     """
     Integration tests for chess game components.
-    Tests the interactions between multiple classes.
+    Tests interactions between multiple classes.
     """
 
-    # HELPER FUNCTIONS
     def setUp(self) -> None:
-        """Sets up test fixtures before each test method."""
-        # Initialize fresh board and validators
-        self.board: Board = Board()
+        """Set up test fixtures before each test method."""
+        self.board: Board = Board()  # Already initializes the board
         self.move_validator: MoveValidator = MoveValidator(self.board)
-        # No need to explicitly set boards since they reference the same grid
-        # CheckDetector uses static methods, so we don't need an instance
 
-    def tearDown(self):
-        """Cleans up after each test method."""
-        self.board = None
-        self.move_validator = None
+    def tearDown(self) -> None:
+        """Clean up after each test method."""
+        pass  # No cleanup needed
 
-    # TEST CASES
     @test_case(
         "TC-INT-001",
         "Verify Board and MoveValidator work together for valid pawn moves",
     )
-    def test_board_validator_integration_pawn_moves(self):
+    def test_board_validator_integration_pawn_moves(self) -> None:
         """
         Test that Board and MoveValidator correctly handle pawn moves:
         - Single square forward move
@@ -91,14 +84,11 @@ class TestChessGameIntegration(unittest.TestCase):
         self.board.set_grid(new_grid)
 
         # Verify board state after move
-        # Verify piece at E3
         piece_at_e3 = self.board.get_piece("E3")
-        self.assertIsNotNone(piece_at_e3, "Piece should exist at E3")
+        self.assertIsNotNone(piece_at_e3, "Expected piece at E3")
         if piece_at_e3:  # Type guard
             self.assertEqual(piece_at_e3.piece_type, "pawn")
             self.assertEqual(piece_at_e3.color, "white")
-
-        # Verify original position is empty
         self.assertIsNone(self.board.get_piece("E2"))
         self.assertIsNone(captured)
 
@@ -110,8 +100,10 @@ class TestChessGameIntegration(unittest.TestCase):
         self.board.set_grid(new_grid)
 
         piece_at_d5 = self.board.get_piece("D5")
-        self.assertEqual(piece_at_d5.piece_type, "pawn")
-        self.assertEqual(piece_at_d5.color, "black")
+        self.assertIsNotNone(piece_at_d5, "Expected piece at D5")
+        if piece_at_d5:  # Type guard
+            self.assertEqual(piece_at_d5.piece_type, "pawn")
+            self.assertEqual(piece_at_d5.color, "black")
 
         # TEST 3: Valid diagonal capture
         # Move white pawn to position for capture
@@ -126,12 +118,15 @@ class TestChessGameIntegration(unittest.TestCase):
         self.board.set_grid(new_grid)
 
         # Verify capture occurred
-        self.assertIsNotNone(captured)
-        self.assertEqual(captured.piece_type, "pawn")
-        self.assertEqual(captured.color, "black")
+        self.assertIsNotNone(captured, "Expected captured piece")
+        if captured:  # Type guard
+            self.assertEqual(captured.piece_type, "pawn")
+            self.assertEqual(captured.color, "black")
 
         piece_at_d5 = self.board.get_piece("D5")
-        self.assertEqual(piece_at_d5.color, "white")
+        self.assertIsNotNone(piece_at_d5, "Expected piece at D5 after capture")
+        if piece_at_d5:  # Type guard
+            self.assertEqual(piece_at_d5.color, "white")
 
     @test_case(
         "TC-INT-002",
@@ -162,18 +157,20 @@ class TestChessGameIntegration(unittest.TestCase):
         is_check = CheckDetector.is_in_check("black", self.board.grid)
         self.assertTrue(is_check, "Black king should be in check")
 
-        # Verify checking piece is the queen by finding the queen and checking its attack squares
+        # Verify checking piece is the queen
         queen_piece = self.board.get_piece("H5")
-        self.assertEqual(queen_piece.piece_type, "queen")
-        self.assertEqual(queen_piece.color, "white")
+        self.assertIsNotNone(queen_piece, "Queen should be at H5")
+        if queen_piece:  # Type guard
+            self.assertEqual(queen_piece.piece_type, "queen")
+            self.assertEqual(queen_piece.color, "white")
 
-        # Get king position
-        king_row, king_col = CheckDetector.find_king("black", self.board.grid)
-        king_pos = StaticChessMethods.indices_to_uci(king_row, king_col)
+            # Get king position
+            king_row, king_col = CheckDetector.find_king("black", self.board.grid)
+            king_pos = StaticChessMethods.indices_to_uci(king_row, king_col)
 
-        # Verify queen can attack king
-        queen_moves = queen_piece.get_legal_moves()
-        self.assertIn(king_pos, queen_moves, "Queen should be able to attack king")
+            # Verify queen can attack king
+            queen_moves = queen_piece.get_legal_moves()
+            self.assertIn(king_pos, queen_moves, "Queen should be able to attack king")
 
     @test_case(
         "TC-INT-003",
@@ -205,7 +202,9 @@ class TestChessGameIntegration(unittest.TestCase):
 
         # Verify knight moved successfully despite pawns
         piece = self.board.get_piece("C3")
-        self.assertEqual(piece.piece_type, "knight")
+        self.assertIsNotNone(piece, "Knight should be at C3")
+        if piece:  # Type guard
+            self.assertEqual(piece.piece_type, "knight")
 
     @test_case(
         "TC-INT-004",
@@ -236,8 +235,10 @@ class TestChessGameIntegration(unittest.TestCase):
 
         # Verify pawn was promoted to queen
         promoted_piece = self.board.get_piece("E8")
-        self.assertEqual(promoted_piece.piece_type, "queen")
-        self.assertEqual(promoted_piece.color, "white")
+        self.assertIsNotNone(promoted_piece, "Promoted piece should exist")
+        if promoted_piece:  # Type guard
+            self.assertEqual(promoted_piece.piece_type, "queen")
+            self.assertEqual(promoted_piece.color, "white")
 
     @test_case(
         "TC-INT-005",
@@ -259,13 +260,13 @@ class TestChessGameIntegration(unittest.TestCase):
             ("D1", "H5"),  # White queen puts black in check
         ]
 
-        new_grid: Sequence[Sequence[Piece | None]]
         for src, dst in moves:
             new_grid, _ = self.board.move_piece(src, dst)
             self.board.set_grid(new_grid)
 
         # Verify black king is in check
-        self.assertTrue(CheckDetector().is_in_check("black", new_grid))
+        is_check = CheckDetector.is_in_check("black", self.board.grid)
+        self.assertTrue(is_check, "Black king should be in check")
 
         # Test invalid moves that don't address check
         is_valid, _ = self.move_validator.is_valid_move("B8", "C6", "black")
@@ -288,22 +289,26 @@ class TestChessGameIntegration(unittest.TestCase):
         """
         # Store initial state
         initial_e2_piece = self.board.get_piece("E2")
+        self.assertIsNotNone(initial_e2_piece, "Initial piece should exist")
 
         # Validate a move (which should use a board copy internally)
         self.move_validator.is_valid_move("E2", "E4", "white")
 
         # Verify original board unchanged
         current_e2_piece = self.board.get_piece("E2")
-        self.assertEqual(
-            initial_e2_piece.piece_type,
-            current_e2_piece.piece_type,
-            "Board state should not change during move validation",
-        )
-        self.assertEqual(
-            initial_e2_piece.color,
-            current_e2_piece.color,
-            "Board state should not change during move validation",
-        )
+        self.assertIsNotNone(current_e2_piece, "Current piece should still exist")
+
+        if initial_e2_piece and current_e2_piece:  # Type guard
+            self.assertEqual(
+                initial_e2_piece.piece_type,
+                current_e2_piece.piece_type,
+                "Board state should not change during move validation",
+            )
+            self.assertEqual(
+                initial_e2_piece.color,
+                current_e2_piece.color,
+                "Board state should not change during move validation",
+            )
 
         # Make actual move
         new_grid, _ = self.board.move_piece("E2", "E4")
@@ -313,9 +318,12 @@ class TestChessGameIntegration(unittest.TestCase):
         self.assertIsNone(
             self.board.get_piece("E2"), "Original position should be empty after move"
         )
+
         moved_piece = self.board.get_piece("E4")
-        self.assertEqual(moved_piece.piece_type, "pawn")
-        self.assertEqual(moved_piece.color, "white")
+        self.assertIsNotNone(moved_piece, "Moved piece should exist")
+        if moved_piece:  # Type guard
+            self.assertEqual(moved_piece.piece_type, "pawn")
+            self.assertEqual(moved_piece.color, "white")
 
 
 if __name__ == "__main__":
