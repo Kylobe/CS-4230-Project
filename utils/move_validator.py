@@ -96,6 +96,38 @@ class MoveValidator:
         # Check if trying to capture own piece
         if dest_piece and dest_piece.color == current_player:
             return False, "Cannot capture your own piece"
+
+        # Check if trying to move through another piece
+        if self._path_is_blocked(piece, source_row, source_col, dest_row, dest_col):
+            return False, "That path is blocked"
         
         return False, "Unknown piece type"
     
+    def _path_is_blocked(self, piece, source_row, source_col, dest_row, dest_col):
+        """Checks whether there's a piece on the path `piece` wants to travel along.
+
+        If `piece` is a knight, this method always returns `False`.
+
+        Returns:
+            bool: `True` if the action is invalid (i.e., the path is blocked);
+            `False` otherwise.
+        """
+        piece_type = piece.piece_type
+
+        # Let knights jump over pieces
+        if piece_type == "knight":
+            return False
+
+        # Find direction of movement
+        row_dir = 0 if (dest_row == source_row) else ((dest_row - source_row) // abs(dest_row - source_row))
+        col_dir = 0 if (dest_col == source_col) else ((dest_col - source_col) // abs(dest_col - source_col))
+
+        # Check each square in the path
+        curr_row, curr_col = source_row + row_dir, source_col + col_dir
+        while (curr_row, curr_col) != (dest_row, dest_col):
+            if self.board.grid[curr_row][curr_col] is not None:
+                return True
+            curr_row += row_dir
+            curr_col += col_dir
+
+        return False
