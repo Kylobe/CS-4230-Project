@@ -8,6 +8,10 @@ This chess program implements a fully functional two-player chess game in the te
 
 The game displays an 8x8 chess board with pieces represented by letters (uppercase for white, lowercase for black). The board is labeled with standard chess notation: files A-H (columns) and ranks 1-8 (rows).
 
+The **testing plan** is in the root directory as a .pdf and .docx file.
+
+All **test results**, including the test list, will be found in the chess_test_results_{date}_{time}.xslx.
+
 ## Directory
 - [Component Descriptions](#component-descriptions)
 - [How to Run](#how-to-run)
