@@ -52,13 +52,12 @@ Excel spreadsheet documenting all bugs discovered during testing.
 - **Status Tracking:** Current state of each defect (Open, In Progress, Fixed, Closed)
 
 **Columns:**
-- **Defect ID:** Unique identifier (BUG001, BUG002, etc.)
+- **Bug ID:** Unique identifier (BUG001, BUG002, etc.)
 - **Test Case ID:** Which test case discovered the bug
 - **Severity:** Impact level of the defect
 - **Priority:** Urgency for fixing
 - **Title:** Short description of the issue
 - **Description:** Detailed explanation of the problem
-- **Steps to Reproduce:** Exact steps to trigger the bug
 - **Expected Behavior:** What should happen
 - **Actual Behavior:** What actually happens (the bug)
 - **Status:** Current state of the defect
