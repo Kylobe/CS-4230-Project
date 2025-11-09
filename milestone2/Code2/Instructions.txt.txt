@@ -1,0 +1,94 @@
+Instructions for Running the Telephone Switching System (TSS)
+System Requirements
+
+Windows, macOS, or Linux
+
+.NET 9.0 Runtime (if not included with the executable)
+
+Running the Program
+
+Make sure you have .NET 9.0 installed.
+
+Navigate to:
+
+(baseDirectory)\TSSEXE\bin\Debug\net9.0
+
+
+Ensure a phones.txt file is located in the following path relative to the project root:
+
+(baseDirectory)\Data\phones.txt
+
+
+Run the program:
+
+Windows: Double-click PhoneDirectory.exe or run from Command Prompt
+
+macOS/Linux: Open Terminal and run ./PhoneDirectory
+
+Creating the Phone Directory
+
+Inside the project root, create a folder named Data (if it doesn’t already exist).
+
+Inside that folder, create a file named phones.txt.
+
+Format each entry as:
+
+NNNNN Name
+
+
+Example:
+
+12345 Alice
+23456 Bob
+34567 Carol
+
+
+Follow these rules:
+
+Exactly 5 digits for phone numbers
+
+Names: 1–12 letters, no numbers or special characters
+
+One space between number and name
+
+Up to 20 entries total
+
+Lines starting with # or blank lines are ignored
+
+Commands
+
+Type commands at the prompt. Commands are case-insensitive.
+
+Command	Description	Example
+offhook <name>	Take phone off the hook	offhook Alice
+onhook <name>	Hang up the phone	onhook Bob
+call <name>	Make a call	call Carol
+conference <name>	Add a third person to the call	conference Dave
+transfer <name>	Transfer your call	transfer Eve
+status	Show all phone statuses	status
+help	Show help menu	help
+quit or exit	Exit the program	quit
+Troubleshooting
+
+Error: phones.txt not found → Make sure phones.txt is located in the Data folder under the project root.
+
+Error: No valid phone entries found → Check file formatting rules.
+
+Commands not working → Use correct syntax (e.g., offhook Alice, not just offhook).
+
+“denial” or “busy” errors → Check if phones exist, are offhook, and not already in a call.
+
+Quick Reference
+offhook <name>     - Pick up phone
+onhook <name>      - Hang up phone
+call <name>        - Call someone
+conference <name>  - Add 3rd person to call
+transfer <name>    - Transfer your call
+status             - Show all phone states
+help               - Show help menu
+quit               - Exit program
+
+
+Version: TSS 1.0
+Platform: .NET 9.0
+Type: Console Application
